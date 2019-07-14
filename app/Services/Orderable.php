@@ -13,7 +13,13 @@ interface Orderable
     /**
      * @return mixed
      */
-    public function shipping();
+    public function calculate();
+
+    /**
+     * @param int $shipping
+     * @return mixed
+     */
+    public function shipping(int $shipping);
 
     /**
      * @param $discount
@@ -30,5 +36,6 @@ interface Orderable
     /**
      * @return mixed
      */
-    public function total();
+    public function process();
+
 }

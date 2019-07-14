@@ -5,7 +5,14 @@ namespace App\Services;
 
 class OrderManager implements Orderable
 {
+    protected $total;
+    /**
+     * @var array
+     */
     protected $items;
+
+    /** @var string */
+    protected $deliveryMessage;
 
     public function __construct($items = [])
     {
@@ -15,9 +22,20 @@ class OrderManager implements Orderable
     /**
      * @return mixed
      */
-    public function shipping()
+    public function calculate()
     {
-        return 5;
+        $this->total = collect($this->items)->sum('price');
+        return $this;
+    }
+
+    /**
+     * @param int $shipping
+     * @return mixed
+     */
+    public function shipping(int $shipping)
+    {
+        $this->total += $shipping;
+        return $this;
     }
 
     /**
@@ -26,7 +44,8 @@ class OrderManager implements Orderable
      */
     public function discount($discount = 0.02)
     {
-        return $this->total() * $discount;
+        $this->total -= $this->total * $discount;
+        return $this;
     }
 
     /**
@@ -35,23 +54,19 @@ class OrderManager implements Orderable
      */
     public function delivery($company)
     {
-        return 'Delivery will be made by ' . $company;
+        $this->deliveryMessage = 'Delivery will be made by ' . $company;
+        return $this;
     }
+
 
     /**
-     * @return mixed
+     * @return object
      */
-    public function total()
+    public function process()
     {
-        return collect($this->items)->sum('price');
-    }
-
-    public function workout($company)
-    {
-        $totalToPay = ($this->pay() + $this->shipping()) - $this->discount();
         return (object)[
-            'delivery' => $this->delivery($company),
-            'total' => $totalToPay
+            'delivery' => $this->deliveryMessage,
+            'paid' => $this->total
         ];
     }
 }
