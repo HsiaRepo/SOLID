@@ -2,19 +2,23 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
+use Database\Factories\ProductFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class OrderProcessTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
-    }
+     public function a_user_order_can_be_processed():void
+     {
+         $product = ProductFactory::new();
+
+         // TODO WIP
+
+
+
+     }
 }
