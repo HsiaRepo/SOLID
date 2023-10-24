@@ -3,9 +3,12 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class StockRepository
 {
+    const MINIMUM_STOCK_LEVEL = 1;
+
     /**
      * @param $product_id
      * @return \Illuminate\Database\Query\Builder
@@ -13,5 +16,22 @@ class StockRepository
     public function forProduct($product_id)
     {
         return DB::table('stocks')->where('product_id', $product_id)->first();
+    }
+
+    /**
+     * @param $product_id
+     * @return \Illuminate\Database\Query\Builder
+     * @throws ValidationException
+     */
+    public function checkAvailability($product_id){
+        $stock = $this->forProduct($product_id);
+
+        if ($stock->quantity < self::MINIMUM_STOCK_LEVEL) {
+            throw ValidationException::withMessages([
+                'stock' => ['we are out of stock '],
+            ]);
+        }
+
+        return $stock;
     }
 }

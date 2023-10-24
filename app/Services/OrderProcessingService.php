@@ -39,12 +39,7 @@ class OrderProcessingService
         // Get the stock level
         $stock = $this->stockRepository->forProduct($product_id);
 
-        // check the stock level
-        if ($stock->quantity < 1) {
-            throw ValidationException::withMessages([
-                'stock' => ['we are out of stock '],
-            ]);
-        }
+        $this->stockRepository->checkAvailability($product_id);
 
         // Apply discount
         $total = $this->applySpecialDiscount($product);
