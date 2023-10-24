@@ -18,14 +18,16 @@ class OrderProcessingService
      * @param ProductRepository $productRepository
      */
     public function __construct(
-        ProductRepository $productRepository,
-        StockRepository   $stockRepository,
-        DiscountService   $discountService
+        ProductRepository    $productRepository,
+        StockRepository      $stockRepository,
+        DiscountService      $discountService,
+        StripePaymentService $stripePaymentService
     )
     {
         $this->productRepository = $productRepository;
         $this->stockRepository = $stockRepository;
         $this->discountService = $discountService;
+        $this->stripePaymentService = $stripePaymentService;
     }
 
     /**
@@ -34,7 +36,7 @@ class OrderProcessingService
      * @return array|void
      * @throws ValidationException
      */
-    public function execute($product_id, Request $request)
+    public function execute($product_id)
     {
         $product = $this->productRepository->getById($product_id);
 
@@ -44,31 +46,16 @@ class OrderProcessingService
 
         $total = $this->discountService->with($product)->applySpecialDiscount();
 
-        $paymentSuccessMessage = $this->processPaymentViaStripe('stripe', $total);
+        $paymentSuccessMessage = $this->stripePaymentService->process($total);
 
-        // payment succeeded
-        if (!empty($paymentSuccessMessage)) {
+        $this->stockRepository->record($product_id);
 
-            $this->stockRepository->record($product_id);
+        return [
+            'payment_message' => $paymentSuccessMessage,
+            'discounted_price' => $total,
+            'original_price' => $product->price,
+            'message' => 'Thank you, your order is being processed'
+        ];
 
-            return [
-                'payment_message' => $paymentSuccessMessage,
-                'discounted_price' => $total,
-                'original_price' => $product->price,
-                'message' => 'Thank you, your order is being processed'
-            ];
-        }
-
-    }
-
-    /**
-     * @param $provider
-     * @param $total
-     * @return string
-     */
-    protected function processPaymentViaStripe($provider, $total)
-    {
-        $price = "£{$total}";
-        return 'Processing payment of ' . $price . ' through ' . $provider;
     }
 }
