@@ -21,10 +21,11 @@ class ProcessOrdersController extends Controller
      *
      * @param Product $product
      * @param \Illuminate\Http\Request $request
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke($product_id, Request $request)
     {
-        return $this->orderProcessingService->execute($product_id, $request);
+        $response = $this->orderProcessingService->execute($product_id, $request);
+        return response()->json($response);
     }
 }

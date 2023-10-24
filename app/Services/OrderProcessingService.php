@@ -5,7 +5,9 @@ namespace App\Services;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Validation\ValidationException;
+
+//use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderProcessingService
 {
@@ -19,7 +21,9 @@ class OrderProcessingService
 
         // check the stock level
         if ($stock->quantity < 1) {
-            throw new NotFoundHttpException('We are out of stock');
+            throw ValidationException::withMessages([
+                'stock' => ['we are out of stock '],
+            ]);
         }
 
         // Apply discount
@@ -35,7 +39,7 @@ class OrderProcessingService
 
         // payment succeeded
         if (!empty($paymentSuccessMessage)) {
-            
+
             // update Stock
             DB::table('stocks')
                 ->where('product_id', $product_id)
@@ -46,7 +50,7 @@ class OrderProcessingService
             return [
                 'payment_message' => $paymentSuccessMessage,
                 'discounted_price' => $total,
-                'original_price'  => $product->price,
+                'original_price' => $product->price,
                 'message' => 'Thank you, your order is being processed'
             ];
         }
@@ -62,7 +66,7 @@ class OrderProcessingService
     protected function applySpecialDiscount($product)
     {
         $discount = 0.20 * $product->price;
-        return number_format(($product->price - $discount),2);
+        return number_format(($product->price - $discount), 2);
     }
 
 }
