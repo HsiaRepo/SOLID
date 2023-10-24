@@ -19,9 +19,10 @@ class OrderProcessingService
      */
     public function __construct(
         ProductRepository $productRepository,
-        StockRepository $stockRepository,
-        DiscountService $discountService
-    ){
+        StockRepository   $stockRepository,
+        DiscountService   $discountService
+    )
+    {
         $this->productRepository = $productRepository;
         $this->stockRepository = $stockRepository;
         $this->discountService = $discountService;
@@ -35,26 +36,15 @@ class OrderProcessingService
      */
     public function execute($product_id, Request $request)
     {
-        // Find the Product
         $product = $this->productRepository->getById($product_id);
 
-        // Get the stock level
         $stock = $this->stockRepository->forProduct($product_id);
 
         $this->stockRepository->checkAvailability($product_id);
 
-        // Apply discount
-//        $total = $this->applySpecialDiscount($product);
         $total = $this->discountService->with($product)->applySpecialDiscount();
 
-
-        // check for payment method
-//        $paymentSuccessMessage = '';
-
-        // Attempt payment
-//        if ($request->has('payment_method') && $request->input('payment_method') === 'stripe') {
-            $paymentSuccessMessage = $this->processPaymentViaStripe('stripe', $total);
-//        }
+        $paymentSuccessMessage = $this->processPaymentViaStripe('stripe', $total);
 
         // payment succeeded
         if (!empty($paymentSuccessMessage)) {
