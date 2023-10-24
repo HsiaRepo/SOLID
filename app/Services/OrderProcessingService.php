@@ -19,10 +19,12 @@ class OrderProcessingService
      */
     public function __construct(
         ProductRepository $productRepository,
-        StockRepository $stockRepository
+        StockRepository $stockRepository,
+        DiscountService $discountService
     ){
         $this->productRepository = $productRepository;
         $this->stockRepository = $stockRepository;
+        $this->discountService = $discountService;
     }
 
     /**
@@ -42,25 +44,22 @@ class OrderProcessingService
         $this->stockRepository->checkAvailability($product_id);
 
         // Apply discount
-        $total = $this->applySpecialDiscount($product);
+//        $total = $this->applySpecialDiscount($product);
+        $total = $this->discountService->with($product)->applySpecialDiscount();
+
 
         // check for payment method
-        $paymentSuccessMessage = '';
+//        $paymentSuccessMessage = '';
 
         // Attempt payment
-        if ($request->has('payment_method') && $request->input('payment_method') === 'stripe') {
+//        if ($request->has('payment_method') && $request->input('payment_method') === 'stripe') {
             $paymentSuccessMessage = $this->processPaymentViaStripe('stripe', $total);
-        }
+//        }
 
         // payment succeeded
         if (!empty($paymentSuccessMessage)) {
 
-            // update Stock
-            DB::table('stocks')
-                ->where('product_id', $product_id)
-                ->update([
-                    'quantity' => $stock->quantity - 1
-                ]);
+            $this->stockRepository->record($product_id);
 
             return [
                 'payment_message' => $paymentSuccessMessage,
@@ -82,15 +81,4 @@ class OrderProcessingService
         $price = "£{$total}";
         return 'Processing payment of ' . $price . ' through ' . $provider;
     }
-
-    /**
-     * @param $product
-     * @return string
-     */
-    protected function applySpecialDiscount($product)
-    {
-        $discount = 0.20 * $product->price;
-        return number_format(($product->price - $discount), 2);
-    }
-
 }

@@ -34,4 +34,18 @@ class StockRepository
 
         return $stock;
     }
+
+    /**
+     * @param $product_id
+     * @return void
+     */
+    public function record($product_id)
+    {
+        $stock = DB::table('stocks')
+            ->where('product_id', $product_id);
+
+            $stock->update([
+                'quantity' => $stock->first()->quantity - 1
+            ]);
+    }
 }
