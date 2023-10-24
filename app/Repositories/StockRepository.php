@@ -8,10 +8,10 @@ class StockRepository
 {
     /**
      * @param $product_id
-     * @return \Illuminate\Database\Query\Builder\mixed
+     * @return \Illuminate\Database\Query\Builder
      */
     public function forProduct($product_id)
     {
-        return DB::table('stocks')->find($product_id);
+        return DB::table('stocks')->where('product_id', $product_id)->first();
     }
 }
