@@ -42,7 +42,7 @@ class OrderProcessingService
 
         $stock = $this->stockRepository->forProduct($product_id);
 
-        $this->stockRepository->checkAvailability($product_id);
+        $this->stockRepository->checkAvailability($stock);
 
         $total = $this->discountService->with($product)->applySpecialDiscount();
 

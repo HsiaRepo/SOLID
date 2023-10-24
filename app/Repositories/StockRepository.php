@@ -23,9 +23,7 @@ class StockRepository
      * @return \Illuminate\Database\Query\Builder
      * @throws ValidationException
      */
-    public function checkAvailability($product_id){
-        $stock = $this->forProduct($product_id);
-
+    public function checkAvailability($stock){
         if ($stock->quantity < self::MINIMUM_STOCK_LEVEL) {
             throw ValidationException::withMessages([
                 'stock' => ['we are out of stock '],
