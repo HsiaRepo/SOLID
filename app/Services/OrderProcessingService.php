@@ -3,6 +3,8 @@
 namespace App\Services;
 
 
+use App\Repositories\ProductRepository;
+use App\Repositories\StockRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -11,13 +13,31 @@ use Illuminate\Validation\ValidationException;
 
 class OrderProcessingService
 {
+
+    /**
+     * @param ProductRepository $productRepository
+     */
+    public function __construct(
+        ProductRepository $productRepository,
+        StockRepository $stockRepository
+    ){
+        $this->productRepository = $productRepository;
+        $this->stockRepository = $stockRepository;
+    }
+
+    /**
+     * @param $product_id
+     * @param Request $request
+     * @return array|void
+     * @throws ValidationException
+     */
     public function execute($product_id, Request $request)
     {
         // Find the Product
-        $product = DB::table('products')->find($product_id);
+        $product = $this->productRepository->getById($product_id);
 
         // Get the stock level
-        $stock = DB::table('stocks')->find($product_id);
+        $stock = $this->stockRepository->forProduct($product_id);
 
         // check the stock level
         if ($stock->quantity < 1) {
@@ -57,12 +77,21 @@ class OrderProcessingService
 
     }
 
+    /**
+     * @param $provider
+     * @param $total
+     * @return string
+     */
     protected function processPaymentViaStripe($provider, $total)
     {
         $price = "£{$total}";
         return 'Processing payment of ' . $price . ' through ' . $provider;
     }
 
+    /**
+     * @param $product
+     * @return string
+     */
     protected function applySpecialDiscount($product)
     {
         $discount = 0.20 * $product->price;
