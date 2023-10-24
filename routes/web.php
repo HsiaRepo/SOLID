@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProcessOrdersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,4 +18,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('order/{product_id}/process', 'ProcessOrdersController@__invoke');
+Route::post('order/{product_id}/process', [ProcessOrdersController::class, '__invoke']);
