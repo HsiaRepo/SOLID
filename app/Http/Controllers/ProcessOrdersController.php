@@ -21,15 +21,15 @@ class ProcessOrdersController extends Controller
      *
      * @param Product $product
      * @param \Illuminate\Http\Request $request
-     * @return array
-     * @throws \Illuminate\Validation\ValidationException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke($product_id, Request $request)
     {
         $this->validate($request, [
-            'payment_method' => 'required|string'
+            'payment_method' => 'required | string'
         ]);
 
-        return $this->orderProcessingService->execute($product_id, $request);
+        $response = $this->orderProcessingService->execute($product_id, $request);
+        return response()->json($response);
     }
 }

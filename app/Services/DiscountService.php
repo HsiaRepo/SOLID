@@ -2,16 +2,9 @@
 
 namespace App\Services;
 
-
-/**
- * Class DiscountService
- *
- * @package App\Services
- */
 class DiscountService
 {
-
-    /** @var */
+    const DISCOUNT_20 = .20;
     protected $product;
 
     /**
@@ -21,16 +14,14 @@ class DiscountService
     public function with($product)
     {
         $this->product = $product;
-
         return $this;
     }
 
     /**
      * @return string
      */
-    public function applySpecialDiscount()
-    {
-        $discount = 0.20 * $this->product->price;
-        return number_format($this->product->price - $discount,2);
+    public function applySpecialDiscount(){
+        $discount = self::DISCOUNT_20 * $this->product->price;
+        return number_format(($this->product->price - $discount), 2);
     }
 }

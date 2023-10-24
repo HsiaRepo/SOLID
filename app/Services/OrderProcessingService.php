@@ -8,23 +8,23 @@ use App\Repositories\StockRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+//use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderProcessingService
 {
-    /** @var ProductRepository */
-    protected $productRepository;
-    /** @var StockRepository */
-    protected $stockRepository;
-    /** @var DiscountService */
-    protected $discountService;
-    /** @var StripePaymentService */
-    protected $stripePaymentService;
 
+    /**
+     * @param ProductRepository $productRepository
+     */
     public function __construct(
-        ProductRepository $productRepository,
-        StockRepository $stockRepository,
-        DiscountService $discountService,
+        /** @var ProductRepository */
+        ProductRepository    $productRepository,
+        /** @var StockRepository */
+        StockRepository      $stockRepository,
+        /** @var DiscountService */
+        DiscountService      $discountService,
+        /** @var StripePaymentService */
         StripePaymentService $stripePaymentService
     )
     {
@@ -34,13 +34,18 @@ class OrderProcessingService
         $this->stripePaymentService = $stripePaymentService;
     }
 
+    /**
+     * @param $product_id
+     * @return array|void
+     * @throws ValidationException
+     */
     public function execute($product_id)
     {
         $product = $this->productRepository->getById($product_id);
 
         $stock = $this->stockRepository->forProduct($product_id);
 
-        $this->stockRepository->checkAvailibility($stock);
+        $this->stockRepository->checkAvailability($stock);
 
         $total = $this->discountService->with($product)->applySpecialDiscount();
 
@@ -56,8 +61,4 @@ class OrderProcessingService
         ];
 
     }
-
-
-
-
 }
