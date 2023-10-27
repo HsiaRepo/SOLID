@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Repositories\Contracts\StockRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-class StockRepository
+class MysqlStockRepository implements StockRepositoryInterface
 {
     const MINIMUM_STOCK_LEVEL = 1;
 
