@@ -2,10 +2,32 @@
 
 namespace App\Services;
 
+
+use App\Patterns\Discounts\Discountable;
+
+/**
+ * Class DiscountService
+ *
+ * @package App\Services
+ */
 class DiscountService
 {
-    const DISCOUNT_20 = .20;
+
+    /** @var */
     protected $product;
+
+    /** @var Discountable */
+    protected $discountable;
+
+    public function __construct(Discountable $discountable)
+    {
+        $this->discountable = $discountable;
+    }
+
+    public static function make(Discountable $discountable)
+    {
+        return new static($discountable);
+    }
 
     /**
      * @param $product
@@ -14,14 +36,15 @@ class DiscountService
     public function with($product)
     {
         $this->product = $product;
+
         return $this;
     }
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function applySpecialDiscount(){
-        $discount = self::DISCOUNT_20 * $this->product->price;
-        return number_format(($this->product->price - $discount), 2);
+    public function apply()
+    {
+        return $this->discountable->apply($this->product);
     }
 }
