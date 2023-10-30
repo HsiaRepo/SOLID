@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\OrderManager;
+use App\Services\BaseOrderManager;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,7 +19,7 @@ class OrderManagerTest extends TestCase
         ];
         $deliveryCompany = 'Fedex';
 
-        $orderManager = new OrderManager($items);
+        $orderManager = new BaseOrderManager($items);
         $deliveryMessage = 'Delivery will be made by '. $deliveryCompany;
 
         $processedOrder = $orderManager

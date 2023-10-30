@@ -3,7 +3,7 @@
 namespace App\Services;
 
 
-class OrderManager implements Orderable
+class BaseOrderManager implements Orderable
 {
     protected $total;
     /**
