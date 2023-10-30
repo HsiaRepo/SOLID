@@ -21,18 +21,20 @@ class OrderProcessingService
     protected $stockRepository;
     /** @var DiscountService */
     protected $discountService;
-    /** @var StripePaymentService */
-    protected $stripePaymentService;
+    /** @var Payable */
+    protected $payable;
+
 
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        StockRepositoryInterface $stockRepository,
-        StripePaymentService $stripePaymentService
+        StockRepositoryInterface   $stockRepository,
+        Payable $payable
+
     )
     {
         $this->productRepository = $productRepository;
         $this->stockRepository = $stockRepository;
-        $this->stripePaymentService = $stripePaymentService;
+        $this->payable = $payable;
     }
 
     public function execute($product_id)
@@ -43,10 +45,9 @@ class OrderProcessingService
 
         $this->stockRepository->checkAvailability($stock);
 
-//        $discountService = new DiscountService(new TwentyPercentDiscount);
         $total = DiscountService::make(new TwentyPercentDiscount)->with($product)->apply();
 
-        $paymentSuccessMessage = $this->stripePaymentService->process($total);
+        $paymentSuccessMessage = $this->payable->process($total);
 
         $this->stockRepository->record($product_id);
 
@@ -58,8 +59,6 @@ class OrderProcessingService
         ];
 
     }
-
-
 
 
 }
