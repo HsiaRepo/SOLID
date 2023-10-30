@@ -9,6 +9,7 @@ class Product extends Model
 {
 
     use HasFactory;
+
     public function stock()
     {
         return $this->hasOne(Stock::class);
@@ -22,7 +23,7 @@ class Product extends Model
     public function scopeUpdateStock()
     {
         $this->stock()->update([
-            'quantity'  => $this->stock->quantity - 1
+            'quantity' => $this->stock->quantity - 1
         ]);
     }
 }

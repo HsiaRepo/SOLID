@@ -12,7 +12,7 @@ class ApiRepository extends Repository
 {
 
     /**
-     * @return Model
+     * @return Collection
      */
     public function all(): Collection
     {

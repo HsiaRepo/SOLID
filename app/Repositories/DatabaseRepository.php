@@ -11,7 +11,7 @@ class DatabaseRepository extends Repository
     /**
      * @return Collection
      */
-    public function all() : Collection
+    public function all(): Collection
     {
         return Product::all();
     }
