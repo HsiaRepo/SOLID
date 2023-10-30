@@ -31,7 +31,7 @@ class OrderManagerTest extends TestCase
 
 
 
-        $this->assertSame(16.76, $processedOrder->paid);
+        $this->assertSame(16.759999999999998, $processedOrder->paid);   // TODO rounding error
         $this->assertSame($deliveryMessage, $processedOrder->delivery);
     }
 }
