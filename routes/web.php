@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ProcessOrdersController;
 
 /*
@@ -14,9 +15,15 @@ use App\Http\Controllers\ProcessOrdersController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/**
+ *
+ *Route::get('/', function () {
+ * return view('welcome');
+ * });
+ *
+*/
+
+Route::get('/', [ProductsController::class, 'index']);
 
 Route::get('area', function(\App\Patterns\AreaCalculator $areaCalculator) {
 

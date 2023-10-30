@@ -6,6 +6,8 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\StockRepositoryInterface;
 use App\Repositories\MysqlProductRepository;
 use App\Repositories\MysqlStockRepository;
+use App\Repositories\DatabaseRepository;
+use App\Repositories\ProductsInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
