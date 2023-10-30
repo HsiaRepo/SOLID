@@ -2,7 +2,13 @@
 
 namespace App\Repositories;
 
-class Repository
-{
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
+abstract class Repository
+{
+    /**
+     * @return Collection
+     */
+    abstract public function all() : Collection;
 }
