@@ -41,7 +41,7 @@ class OrderProcessingService
 
         $stock = $this->stockRepository->forProduct($product_id);
 
-        $this->stockRepository->checkAvailibility($stock);
+        $this->stockRepository->checkAvailability($stock);
 
 //        $discountService = new DiscountService(new TwentyPercentDiscount);
         $total = DiscountService::make(new TwentyPercentDiscount)->with($product)->apply();

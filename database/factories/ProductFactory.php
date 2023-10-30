@@ -1,14 +1,33 @@
 <?php
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+namespace Database\Factories;
 
-use App\Models\Product;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Product::class, function (Faker $faker) {
-    return [
-        'sku' => $faker->randomElement(['BP063-0001','BP063-0002','BP063-0003','UA064-0002']),
-        'name' => $faker->randomElement(['Giorgio','Firetrap','Kangol','Ben Sherman']),
-        'price' => $faker->randomElement(['120.25','140.35','156.99'])
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
+ */
+
+class ProductFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = \App\Models\Product::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'sku' => $this->faker->randomElement(['BP063-0001','BP063-0002','BP063-0003','UA064-0002']),
+            'name' => $this->faker->randomElement(['Giorgio','Firetrap','Kangol','Ben Sherman']),
+            'price' => $this->faker->randomElement(['120.25','140.35','156.99'])
+        ];
+    }
+}

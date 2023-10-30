@@ -5,5 +5,5 @@ namespace App\Patterns\Discounts;
 
 interface Discountable
 {
-   public function apply($product);
+    public function apply($product);
 }

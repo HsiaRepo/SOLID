@@ -3,8 +3,12 @@
 namespace Tests\Feature;
 
 use Illuminate\Validation\ValidationException;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use Tests\TestCase;
+
+use App\Models\Product;
+use App\Models\Stock;
 
 class OrderProcessTest extends TestCase
 {
@@ -13,43 +17,45 @@ class OrderProcessTest extends TestCase
     /** @test */
     public function a_user_order_can_be_processed(): void
     {
-        $product = factory(\App\Models\Product::class)->create();
-
-        $stock = factory(\App\Models\Stock::class)->create([
+        $product = Product::factory()->create();
+        $stock = Stock::factory()->create([
             'product_id' => $product->id
         ]);
 
-       $response =  $this->post("/order/{$product->id}/process", [
+        $response = $this->post("/order/{$product->id}/process", [
             'payment_method' => 'stripe'
         ])->assertOk()->json();
 
-       $this->assertArrayHasKey('payment_message', $response);
-       $this->assertArrayHasKey('discounted_price', $response);
-       $this->assertArrayHasKey('original_price', $response);
-       $this->assertArrayHasKey('message', $response);
+        /**
+         * 'payment_message' => $paymentSuccessMessage,
+         * 'discounted_price' => $total,
+         * 'original_price'  => $product->price,
+         * 'message' => 'Thank you, your order is being processed'
+         */
+
+        $this->assertArrayHasKey('payment_message', $response);
+        $this->assertArrayHasKey('discounted_price', $response);
+        $this->assertArrayHasKey('original_price', $response);
+        $this->assertArrayHasKey('message', $response);
 
         $this->assertDatabaseHas('stocks', [
             'quantity' => $stock->quantity - 1
         ]);
-
     }
 
     /** @test */
-    public function an_exception_is_thrown_if_stock_is_less_than_one(): void
+    public function an_exception_is_thrown_when_product_is_out_of_stock(): void
     {
         $this->expectException(ValidationException::class);
 
-        $product = factory(\App\Models\Product::class)->create();
-
-        factory(\App\Models\Stock::class)->create([
+        $product = Product::factory()->create();
+        $stock = Stock::factory()->create([
             'quantity' => 0,
             'product_id' => $product->id
         ]);
 
-        $this->withoutExceptionHandling()
-            ->post("/order/{$product->id}/process", [
-                'payment_method' => 'stripe'
-            ]);
-
+        $this->withoutExceptionHandling()->post("/order/{$product->id}/process", [
+            'payment_method' => 'stripe'
+        ]);
     }
 }
