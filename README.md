@@ -1,1 +1,1 @@
-laravel php SOLID principles Udemy project
+laravel php SOLID principles project
